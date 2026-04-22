@@ -2,30 +2,36 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>G2B 공고 큐레이터</title>
+    <title>G2B 마케팅 공고 큐레이터</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
-        body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
-        .container { max-width: 1000px; margin: 0 auto; }
-        button { padding: 10px 20px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 5px; font-weight: bold; }
-        button:hover { background: #0056b3; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        th { background-color: #f8f9fa; }
-        .error { color: red; margin-top: 10px; font-weight: bold; }
-        .info-box { background: #e7f3ff; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        body { font-family: 'Pretendard', sans-serif; padding: 20px; background-color: #f4f7f9; }
+        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: #1a202c; border-bottom: 2px solid #edf2f7; padding-bottom: 15px; }
+        .info { background: #ebf8ff; padding: 15px; border-radius: 8px; color: #2b6cb0; margin-bottom: 20px; }
+        button { padding: 12px 25px; cursor: pointer; background: #3182ce; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; transition: 0.2s; }
+        button:hover { background: #2b6cb0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 25px; background: white; }
+        th, td { border: 1px solid #e2e8f0; padding: 15px; text-align: left; }
+        th { background-color: #f7fafc; color: #4a5568; font-weight: 600; }
+        tr:hover { background-color: #fffaf0; }
+        .error { color: #e53e3e; font-weight: bold; margin-top: 15px; }
+        .badge { background: #edf2f7; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px; }
+        a { color: #3182ce; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🏛️ 나라장터 마케팅/뉴미디어 공고</h1>
-        
-        <div class="info-box">
-            <p><strong>🔍 분석 조건:</strong> 최근 15일 이내 게시된 공고 중 마케팅/홍보 관련 키워드를 실시간 분석합니다.</p>
-            <p style="font-size: 0.9em; color: #555;">※ 별도의 키 입력 없이 아래 버튼을 누르면 즉시 분석이 시작됩니다.</p>
+        <h1>🏛️ 나라장터 공고 정밀 분석기</h1>
+        <div class="info">
+            <strong>🎯 타겟 키워드:</strong> 
+            <span class="badge">뉴미디어</span><span class="badge">온라인 홍보</span><span class="badge">SNS</span>
+            <span class="badge">유튜브</span><span class="badge">영상</span><span class="badge">관광</span>
+            <span class="badge">브랜딩</span><span class="badge">마케팅</span><span class="badge">서포터즈</span>
         </div>
-
-        <button onclick="fetchData()">🚀 공고 분석 시작</button>
+        
+        <p>최근 15일간의 데이터를 중계 서버를 통해 안전하게 분석합니다.</p>
+        <button onclick="fetchData()">🚀 맞춤 공고 분석 시작</button>
         
         <div id="status"></div>
         
@@ -43,82 +49,62 @@
     </div>
 
     <script>
-        // 분석할 핵심 키워드 리스트
         const TARGET_KEYWORDS = ["뉴미디어", "온라인 홍보", "SNS", "유튜브", "영상", "홍보 영상", "관광", "브랜딩", "마케팅", "서포터즈", "통합 홍보"];
 
         async function fetchData() {
             const status = document.getElementById('status');
-            
-            // [방법 3 적용] 실제 API 키를 이곳에 직접 입력합니다.
-            const key = "bb5044817f12ec84f79124ddeb54f375c2d7836b994df4eb4aec5cba14c7d61d"; 
+            const tbody = document.getElementById('resultBody');
+            const table = document.getElementById('resultTable');
 
-            if(key.includes("여기에_실제")) {
-                alert("코드 내부의 API 키를 실제 키로 먼저 교체해 주세요.");
+            // [수정] 1단계에서 복사한 구글 웹 앱 URL을 여기에 붙여넣으세요.
+            const googleProxyUrl = "https://script.google.com/macros/s/AKfycbwu9eoLXTkE-p5rmLZIUpIJjJ9-DnHl3R_yly-M2Eb9JOVX3W2b89H3yGd1q4BkCo_YtQ/exec";
+
+            if(googleProxyUrl.includes("여기에_구글")) {
+                alert("구글 중계 서버 URL을 먼저 설정해 주세요.");
                 return;
             }
 
-            status.innerHTML = "⏳ 나라장터 서버에서 데이터를 수집 중입니다. 잠시만 기다려 주세요...";
-            
-            // 날짜 계산 (15일 전 ~ 오늘 23:59)
-            const endDt = new Date().toISOString().slice(0,10).replace(/-/g, "") + "2359";
-            const startDt = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString().slice(0,10).replace(/-/g, "") + "0000";
-
-            // 이미지 12번 엔드포인트 활용: 나라장터검색조건에 의한 입찰공고용역조회
-            const url = `https://apis.data.go.kr/1230000/BidPublicInfoService05/getBidPblancListInfoServcPPSSrch?serviceKey=${key}&numOfRows=999&pageNo=1&type=json&bidNtceDtFrom=${startDt}&bidNtceDtTo=${endDt}`;
+            status.innerHTML = "<p>⏳ 중계 서버를 통해 나라장터 데이터를 가져오고 있습니다...</p>";
+            table.style.display = 'none';
 
             try {
-                // Axios를 이용한 직접 호출
-                const res = await axios.get(url);
+                // 구글 서버로 요청 (CORS 문제 없음)
+                const res = await axios.get(googleProxyUrl);
                 const data = res.data.response;
 
-                // API 응답 코드 검증
                 if (data.header.resultCode !== '00' && data.header.resultCode !== '03') {
-                    status.innerHTML = `<p class="error">❌ API 오류: ${data.header.resultMsg} (코드: ${data.header.resultCode})</p>`;
+                    status.innerHTML = `<p class="error">❌ API 에러: ${data.header.resultMsg}</p>`;
                     return;
                 }
 
                 const items = data.body.items || [];
-                
-                // 11개 키워드에 대한 OR 조건 필터링 로직
+                // 키워드 필터링
                 const filtered = items.filter(item => 
                     TARGET_KEYWORDS.some(kw => item.bidNtceNm.includes(kw))
                 );
 
-                renderTable(filtered);
-                
-                if (filtered.length > 0) {
-                    status.innerHTML = `<p style="color: blue; font-weight: bold;">✅ 분석 완료: 총 ${filtered.length}건의 맞춤 공고를 발견했습니다.</p>`;
-                } else {
-                    status.innerHTML = `<p style="color: orange; font-weight: bold;">⚠️ 최근 15일 내에 해당 키워드와 일치하는 공고가 없습니다.</p>`;
+                if (filtered.length === 0) {
+                    status.innerHTML = "<p>⚠️ 검색 조건에 맞는 공고가 현재 없습니다.</p>";
+                    return;
                 }
-                
+
+                // 테이블 렌더링
+                tbody.innerHTML = filtered.map(item => `
+                    <tr>
+                        <td><strong>${item.bidNtceNm}</strong></td>
+                        <td>${item.ntceInsttNm}</td>
+                        <td>${item.bidClseDt || '-'}</td>
+                        <td><a href="${item.bidNtceUrl}" target="_blank">🔗 공고이동</a></td>
+                    </tr>
+                `).join('');
+
+                table.style.display = 'table';
+                status.innerHTML = `<p style="color:green; font-weight:bold;">✅ 분석 완료: 총 ${filtered.length}건 발견</p>`;
+
             } catch (e) {
-                // CORS 에러 또는 네트워크 단절 시 처리
-                status.innerHTML = `<p class="error">❌ 서버 연결 실패: 브라우저 보안 정책(CORS) 또는 키 유효성을 확인해 주세요.</p>`;
+                status.innerHTML = `<p class="error">❌ 서버 연결 실패: 구글 앱스 스크립트 배포 설정을 확인하세요.</p>`;
                 console.error(e);
             }
-        }
-
-        function renderTable(data) {
-            const tbody = document.getElementById('resultBody');
-            const table = document.getElementById('resultTable');
-            tbody.innerHTML = '';
-            
-            if(data.length === 0) { 
-                table.style.display = 'none'; 
-                return; 
-            }
-            
-            data.forEach(item => {
-                const row = `<tr>
-                    <td style="font-weight: bold;">${item.bidNtceNm}</td>
-                    <td>${item.ntceInsttNm}</td>
-                    <td>${item.bidClseDt || '정보없음'}</td>
-                    <td><a href="${item.bidNtceUrl}" target="_blank" style="color: #007bff; text-decoration: none; font-weight: bold;">🔗 공고이동</a></td>
-                </tr>`;
-                tbody.innerHTML += row;
-            });
-            table.style.display = 'table';
         }
     </script>
 </body>
